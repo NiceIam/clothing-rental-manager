@@ -2,6 +2,7 @@ package negocio;
 
 import modelo.*;
 import lavanderia.PrendaLavanderia;
+import observer.PrendaSubject;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ public class NegocioAlquiler {
     private Map<String, Empleado> listaDeEmpleados;
     private Map<Integer, ServicioAlquiler> serviciosAlquiler;
     private PriorityQueue<PrendaLavanderia> listaLavanderia;
+    private PrendaSubject prendaSubject; // Patrón Observer
     
     private int contadorServicios;
     private int contadorOrdenLavanderia;
@@ -25,6 +27,7 @@ public class NegocioAlquiler {
         listaDeEmpleados = new HashMap<>();
         serviciosAlquiler = new HashMap<>();
         listaLavanderia = new PriorityQueue<>();
+        prendaSubject = new PrendaSubject();
         contadorServicios = 1;
         contadorOrdenLavanderia = 1;
     }
@@ -90,10 +93,22 @@ public class NegocioAlquiler {
         for (Prenda prenda : prendas) {
             servicio.agregarPrenda(prenda);
             prenda.setDisponible(false);
+            prendaSubject.notificarObservadores(prenda, "ALQUILADA");
         }
         
         serviciosAlquiler.put(numeroServicio, servicio);
         return numeroServicio;
+    }
+    
+    public void cancelarServicioAlquiler(int numeroServicio) {
+        ServicioAlquiler servicio = serviciosAlquiler.get(numeroServicio);
+        if (servicio != null) {
+            for (Prenda prenda : servicio.getPrendasAlquiladas()) {
+                prenda.setDisponible(true);
+                prendaSubject.notificarObservadores(prenda, "DEVUELTA");
+            }
+            serviciosAlquiler.remove(numeroServicio);
+        }
     }
     
     public ServicioAlquiler consultarServicio(int numero) {
@@ -151,9 +166,14 @@ public class NegocioAlquiler {
             PrendaLavanderia prendaLav = listaLavanderia.poll();
             prendasEnviadas.add(prendaLav.getPrenda());
             prendaLav.getPrenda().setDisponible(true);
+            prendaSubject.notificarObservadores(prendaLav.getPrenda(), "EN_LAVANDERIA");
         }
         
         return prendasEnviadas;
+    }
+    
+    public PrendaSubject getPrendaSubject() {
+        return prendaSubject;
     }
     
     public Cliente getCliente(String id) { return listaDeClientes.get(id); }
