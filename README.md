@@ -1,7 +1,7 @@
 # Sistema de Administración de Alquiler de Vestuario - "Los Atuendos"
 
 ## Descripción
-Sistema de gestión para el negocio de alquiler de vestidos para dama, caballero y disfraces, implementando patrones de diseño estructurales y de creación.
+Sistema de gestión para el negocio de alquiler de vestidos para dama, caballero y disfraces, implementando patrones de diseño de creación, estructurales y de comportamiento.
 
 ## Patrones de Diseño Implementados
 
@@ -26,44 +26,85 @@ Sistema de gestión para el negocio de alquiler de vestidos para dama, caballero
 - **Clase**: `FacadeNegocio`
 - **Justificación**: Proporciona una interfaz simplificada para las operaciones complejas del negocio, ocultando la complejidad de la lógica interna y facilitando el uso del sistema.
 
-### Patrón de Comportamiento (Adicional)
+### Patrones de Comportamiento (Actividad 6)
 
-#### 5. Priority Queue (Strategy implícito)
-- **Clase**: `PrendaLavanderia` con `PriorityQueue`
-- **Justificación**: Gestiona la priorización de prendas para lavandería según criterios específicos (manchas, delicadeza, orden de llegada).
+#### 5. Iterator
+- **Clases**: `PrendaIterator`, `PrendaCollection`, `PrendaIteratorImpl`, `PrendaIteratorPorTipo`
+- **Justificación**: Permite recorrer colecciones de prendas sin exponer su representación interna, facilitando diferentes formas de iteración (por tipo, disponibilidad, etc.) sin modificar la estructura de datos.
+
+#### 6. Command
+- **Clases**: `Command`, `RegistrarAlquilerCommand`, `CommandInvoker`
+- **Justificación**: Encapsula operaciones de alquiler como objetos, permitiendo deshacer/rehacer operaciones, mantener historial de transacciones y parametrizar solicitudes. Fundamental para auditoría y recuperación de errores.
+
+#### 7. Observer
+- **Clases**: `PrendaObserver`, `PrendaSubject`, `NotificadorInventario`, `NotificadorEmail`
+- **Justificación**: Notifica automáticamente cambios de estado de prendas a múltiples observadores (inventario, email, logs), manteniendo bajo acoplamiento entre componentes y facilitando la extensión con nuevos tipos de notificaciones.
+
+#### 8. Strategy
+- **Clases**: `EstrategiaDescuento`, `CalculadoraPrecio`, `SinDescuento`, `DescuentoClienteFrecuente`, `DescuentoPorCantidad`
+- **Justificación**: Define familia de algoritmos de descuento intercambiables, permitiendo cambiar la estrategia de pricing en tiempo de ejecución según el tipo de cliente o promoción activa, sin modificar el código del servicio.
 
 ## Estructura del Proyecto
 
 ```
 src/
-├── Main.java                    # Aplicación principal con menú interactivo
+├── Main.java                           # Aplicación principal con menú interactivo
+├── demo/
+│   └── DemoPatronesComportamiento.java # Demostración de patrones
 ├── modelo/
-│   ├── Persona.java            # Clase base para Cliente y Empleado
-│   ├── Cliente.java            # Información de clientes
-│   ├── Empleado.java           # Información de empleados
-│   ├── Prenda.java             # Clase abstracta (Composite)
-│   ├── VestidoDama.java        # Tipo específico de prenda
-│   ├── TrajeCaballero.java     # Tipo específico de prenda
-│   ├── Disfraz.java            # Tipo específico de prenda
-│   └── ServicioAlquiler.java   # Registro de alquileres
+│   ├── Persona.java                   # Clase base para Cliente y Empleado
+│   ├── Cliente.java                   # Información de clientes
+│   ├── Empleado.java                  # Información de empleados
+│   ├── Prenda.java                    # Clase abstracta (Composite)
+│   ├── VestidoDama.java               # Tipo específico de prenda
+│   ├── TrajeCaballero.java            # Tipo específico de prenda
+│   ├── Disfraz.java                   # Tipo específico de prenda
+│   └── ServicioAlquiler.java          # Registro de alquileres
 ├── factory/
-│   └── PrendaFactory.java      # Factory Method para crear prendas
+│   └── PrendaFactory.java             # Factory Method para crear prendas
 ├── facade/
-│   └── FacadeNegocio.java      # Facade para operaciones del negocio
+│   └── FacadeNegocio.java             # Facade para operaciones del negocio
 ├── negocio/
-│   └── NegocioAlquiler.java    # Singleton - Lógica central del negocio
-└── lavanderia/
-    └── PrendaLavanderia.java   # Gestión de cola de lavandería
+│   └── NegocioAlquiler.java           # Singleton - Lógica central del negocio
+├── lavanderia/
+│   └── PrendaLavanderia.java          # Gestión de cola de lavandería
+├── iterator/                           # Patrón Iterator
+│   ├── PrendaIterator.java            # Interfaz del iterador
+│   ├── PrendaIteratorImpl.java        # Iterador concreto
+│   ├── PrendaIteratorPorTipo.java     # Iterador filtrado
+│   └── PrendaCollection.java          # Colección iterable
+├── command/                            # Patrón Command
+│   ├── Command.java                   # Interfaz del comando
+│   ├── RegistrarAlquilerCommand.java  # Comando concreto
+│   └── CommandInvoker.java            # Invocador con historial
+├── observer/                           # Patrón Observer
+│   ├── PrendaObserver.java            # Interfaz del observador
+│   ├── PrendaSubject.java             # Sujeto observable
+│   ├── NotificadorInventario.java     # Observador concreto
+│   └── NotificadorEmail.java          # Observador concreto
+└── strategy/                           # Patrón Strategy
+    ├── EstrategiaDescuento.java       # Interfaz de estrategia
+    ├── CalculadoraPrecio.java         # Contexto
+    ├── SinDescuento.java              # Estrategia concreta
+    ├── DescuentoClienteFrecuente.java # Estrategia concreta
+    └── DescuentoPorCantidad.java      # Estrategia concreta
 ```
 
 ## Funcionalidades
 
+### Funcionalidades Base (AA4)
 1. **Registro de prendas**: Vestidos de dama, trajes de caballero y disfraces
 2. **Registro de clientes y empleados**: Gestión de personas
 3. **Registro de servicios de alquiler**: Con validación de disponibilidad
 4. **Consulta de servicios**: Por número, cliente o fecha
 5. **Consulta de prendas por talla**: Agrupadas por tipo
 6. **Gestión de lavandería**: Registro con prioridad y envío por tandas
+
+### Nuevas Funcionalidades (AA6)
+7. **Iteración flexible de prendas**: Recorrido por tipo, disponibilidad, etc.
+8. **Deshacer/Rehacer operaciones**: Historial de comandos ejecutados
+9. **Notificaciones automáticas**: Sistema de observadores para eventos
+10. **Cálculo dinámico de descuentos**: Estrategias intercambiables de pricing
 
 ## Requisitos
 
@@ -72,9 +113,22 @@ src/
 
 ## Ejecución
 
+### Aplicación Principal
 1. Compilar el proyecto
 2. Ejecutar la clase `Main.java`
 3. Interactuar con el menú de opciones
+
+### Demostración de Patrones
+Para ver los patrones de comportamiento en acción:
+```bash
+java demo.DemoPatronesComportamiento
+```
+
+Esta clase ejecuta ejemplos de:
+- Patrón Iterator: Recorrido de colecciones
+- Patrón Command: Deshacer/rehacer operaciones
+- Patrón Observer: Notificaciones automáticas
+- Patrón Strategy: Cálculo de descuentos
 
 ## Datos de Prueba
 
@@ -91,6 +145,12 @@ El sistema carga automáticamente:
 - Nomenclatura según convenciones Java
 - Documentación en código
 
-## Autor
+## Documentación Adicional
 
-Actividad 4 - Patrones de Diseño Estructurales y de Creación
+- **DIAGRAMAS_UML.md**: Diagramas PlantUML completos (clases, secuencia, componentes)
+- **demo/DemoPatronesComportamiento.java**: Ejemplos de uso de cada patrón
+
+## Actividades
+
+- **Actividad 4**: Patrones de Creación y Estructurales
+- **Actividad 6**: Patrones de Comportamiento
