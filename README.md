@@ -147,7 +147,6 @@ El sistema carga automáticamente:
 
 ## Documentación Adicional
 
-- **DIAGRAMAS_UML.md**: Diagramas PlantUML completos (clases, secuencia, componentes)
 - **demo/DemoPatronesComportamiento.java**: Ejemplos de uso de cada patrón
 
 ## Actividades
